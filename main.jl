@@ -19,17 +19,10 @@ step::Float32 = 0.001
 for i in 0:1101
     target_pred::Float32 = 0.8
 
-    up_pred = neural_net(input, weights .+ step)
-    up_err = error(up_pred[1], target_pred)
-
-    down_pred = neural_net(input, weights .- step)
-    down_err = error(down_pred[1], target_pred)
-
-    if down_err < up_err
-        weights .-= step
-    else
-        weights .+= step
-    end
+    pred = neural_net(input, weights)[1]
+    err = error(pred, target_pred)
+    dir_and_dist = (pred - target_pred) * input[1]
+    weights .-= dir_and_dist
 end
 
 
