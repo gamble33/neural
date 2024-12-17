@@ -26,26 +26,28 @@ n_fans = [1.2, 1.3, 0.5, 1.0]
 index = 0
 
 input::Vec = [avg_games[1], win_percentage[1], n_fans[1]]
+target_pred::Vec = [0.1, 1.0, 0.1]
 
 function learn()
-    weights::Mat = [0.1, 0.2, -0.1]'
-    α = 0.1
+    weights::Mat = [
+        0.1  0.1 -0.3
+        0.1  0.2  0.0
+        0.0  1.3  0.1
+    ]
+
+    α = 0.01
 
     # Learning Process
-    for _ in 0:4
-        target_pred::Vec = [1.0]
+    for _ in 0:5
         pred = neural_net(input, weights)
         err = error(pred, target_pred)
         Δ = pred - target_pred
-        Δw = input .* Δ
-        weights -= Δw' * α
-        println("""
-        pred:$pred
-        error:$err
-        Δ:$Δ
-        Δw:$Δw
-        weights:$weights
-        """)
+        Δw = Δ * input' # Outer product of Δ vector and transposed input vector.
+        weights -= Δw * α
+
+        println(Δw)
+        println()
+        println()
     end
 
 
